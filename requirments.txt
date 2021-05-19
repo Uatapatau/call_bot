@@ -1,0 +1,6 @@
+python-telegram-bot
+telegram
+sqlalchemy==1.4.17
+sqlalchemy_utils==0.37.5
+pyqiwip2p
+bs4
