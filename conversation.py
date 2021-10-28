@@ -61,11 +61,11 @@ def main_menu_dlg(update, context):
     buttons = [
         [
             InlineKeyboardButton(
-                text='Звонки', callback_data=str(SPAM)),
+                text=f'Звонки{emoji_hi}', callback_data=str(SPAM)),
             InlineKeyboardButton(
-                text='Поддержка', callback_data=str(SUPPORT)),
+                text=f'Поддержка{emoji_sup}', callback_data=str(SUPPORT)),
             InlineKeyboardButton(
-                text='Баланс', callback_data=str(BALANCE_MENU)),
+                text=f'Баланс{ emoji_money}', callback_data=str(BALANCE_MENU)),
         ]
     ]
     keyboard = InlineKeyboardMarkup(buttons)
@@ -77,7 +77,7 @@ def main_menu_dlg(update, context):
 def show_support(update, context):
     message = update.message if update.message is not None else update.callback_query.message
     message.reply_text(
-        text=f"Для обращения в поддержку перейдите по ссылкам, укажите id '{context.user_data[USER_ID]}' и опишите вашу проблему")
+        text=f"Для обращения в поддержку перейдите по ссылкам, укажите id '{context.user_data[USER_ID]}' и опишите вашу проблему\n https://t.me/TexBomber ")
     return main_menu_dlg(update, context)
 
 
@@ -92,9 +92,9 @@ def balannce_dlg(update, context):
     buttons = [
         [
             InlineKeyboardButton(
-                text='Пополнить баланс', callback_data=str(GET_PRICE_MENU)),
+                text=f'Пополнить баланс{emoji_money}', callback_data=str(GET_PRICE_MENU)),
             InlineKeyboardButton(
-                text='Ввести промокод', callback_data=str(GET_PROMO)),
+                text=f'Ввести промокод{emoji_promo}', callback_data=str(GET_PROMO)),
 
         ],
         [
@@ -105,7 +105,7 @@ def balannce_dlg(update, context):
     ]
     keyboard = InlineKeyboardMarkup(buttons)
     message.reply_text(
-        text=f"Ваш баланс: {context.user_data[BALANCE]}", reply_markup=keyboard)
+        text=f"Ваш баланс:  {context.user_data[BALANCE]}", reply_markup=keyboard)
     return BALANCE_MENU
 
 
@@ -175,7 +175,7 @@ def check_balance(update, context):
 
 def perform_promo_save(update, context):
     message = update.message if update.message is not None else update.callback_query.message
-    message.reply_text(text="Введите промокод")
+    message.reply_text(text=f"Введите промокод{emoji_promo}")
     return SAVE_PROMO
 
 
@@ -232,11 +232,11 @@ def spam_dlg(update, context):
         ud[PRICE] = ud[TIME]*count
         price = f"-Цена: {ud[PRICE]}"
 
-    text = "Данные для пранка:\n"\
-        f"-Ваш баланс: {ud[BALANCE]}\n"\
-        f"-Номер: {ud[PHONE]}\n"\
+    text = f"Данные для пранка{emoji_clown} :\n"\
+        f"-Ваш баланс: {ud[BALANCE]}{emoji_moneyb}\n"\
+        f"-Номер: {ud[PHONE]}{emoji_phone}\n"\
         f"-Тип: {ud[TYPE]}\n"\
-        f"-Время: {ud[TIME]}\n"
+        f"-Время: {ud[TIME]}{emoji_time}\n"
 
     message.reply_text(text=text + price, reply_markup=keyboard)
     return SPAM_MENU
