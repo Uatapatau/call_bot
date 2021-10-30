@@ -14,13 +14,25 @@ def main_conversation(cmd):
                                      pattern='^' + str(SUPPORT) + '$'),
                 spam_conversation('^' + str(SPAM) + '$'),
                 balance_conversation('^' + str(BALANCE_MENU) + '$'),
+                CallbackQueryHandler(conversation.admin_menu,
+                                     pattern='^' + str(ADMIN_DLG) + '$'),
+            ],
+            ADMIN_DLG:[
+                CallbackQueryHandler(conversation.perform_add_bonus,
+                                     pattern='^' + str(INPUT_BONUS) + '$'),
+                CallbackQueryHandler(conversation.return_to_menu_from_admin,
+                                     pattern='^' + str(BACK_TO_MENU) + '$'),
+            ],
+            SAVE_BONUS: [
+                MessageHandler(
+                    Filters.text, conversation.save_bonus),
             ],
         },
 
         fallbacks=[
             MessageHandler(
-                Filters.text, conversation.process_arbitrary_message),
-            CallbackQueryHandler(conversation.process_arbitrary_callback)
+                Filters.text, conversation.process_arbitrary_message_main),
+            CallbackQueryHandler(conversation.process_arbitrary_callback_main)
         ],
 
         map_to_parent={
@@ -62,13 +74,12 @@ def balance_conversation(pattern):
                 CallbackQueryHandler(conversation.return_to_menu,
                                      pattern='^' + str(BACK_TO_BALANCE_MENU) + '$'),
             ]
-
         },
 
         fallbacks=[
             MessageHandler(
-                Filters.text, conversation.process_arbitrary_message),
-            CallbackQueryHandler(conversation.process_arbitrary_callback)
+                Filters.text, conversation.process_arbitrary_message_sub),
+            CallbackQueryHandler(conversation.process_arbitrary_callback_sub)
         ],
 
         map_to_parent={
@@ -117,8 +128,8 @@ def spam_conversation(pattern):
 
         fallbacks=[
             MessageHandler(
-                Filters.text, conversation.process_arbitrary_message),
-            CallbackQueryHandler(conversation.process_arbitrary_callback)
+                Filters.text, conversation.process_arbitrary_message_sub),
+            CallbackQueryHandler(conversation.process_arbitrary_callback_sub)
         ],
 
         map_to_parent={

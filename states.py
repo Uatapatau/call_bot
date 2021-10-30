@@ -28,11 +28,14 @@ ORIGIN = 1000
     SAVE_TYPE,
     TYPE_MENU,
     ATTEMP_MENU,
-) = range(ORIGIN, ORIGIN + 22)
+    ADMIN_DLG,
+    INPUT_BONUS,
+    SAVE_BONUS,
+) = range(ORIGIN, ORIGIN + 25)
 # DATA
 (
-    USER_ID, BILL_OBJ, BALANCE, AMOUNT, ENGINE, PHONE, TYPE, TIME, PRICE
-)=range(ORIGIN * 2, ORIGIN*2 + 9)
+    USER_ID, BILL_OBJ, BALANCE, AMOUNT, ENGINE, PHONE, TYPE, TIME, PRICE, ADMINS_ID
+)=range(ORIGIN * 2, ORIGIN*2 + 10)
 # список эмодзи
 
 emoji_hi = '📞'

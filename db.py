@@ -23,7 +23,7 @@ class User(Base):
 
     user_id = Column(String(length=12))
     balance = Column(Integer)
-    
+
     def __init__(self, user_id, balance):
         self.user_id = user_id
         self.balance = balance
@@ -55,11 +55,11 @@ class Promo(Base):
 
     bonus_id = Column(String(length=12))
     bonus = Column(Integer)
-
-    def __init__(self, bonus_id, bonus):
+    data = Column(Text)
+    def __init__(self, bonus_id, bonus,data):
         self.bonus_id = bonus_id
         self.bonus = bonus
-
+        self.data= data
 
 def create_row(engine, table, kwargs):
     with Session(engine) as session:
@@ -67,6 +67,15 @@ def create_row(engine, table, kwargs):
         if user is None:
             session.add(table(**kwargs))
             session.commit()
+
+
+def update_promo(engine,bonus_id, data):
+    with Session(engine) as session:
+        promo = session.query(Promo).filter_by(bonus_id = bonus_id).first()
+        if promo:
+            promo.data = data
+            session.commit()
+
 
 def get_row(engine, table, kwargs):
     with Session(engine) as session:
