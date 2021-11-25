@@ -11,12 +11,12 @@ ORIGIN = 1000
     SPAM,
     STOPPING,
     BALANCE_MENU,
-    FILL_BALANCE,  
-    GET_PROMO,  
+    FILL_BALANCE,
+    GET_PROMO,
     BACK_TO_MENU,
     SAVE_PHONE,
-    SAVE_ATTEMPS,  
-    SPAM_MENU, 
+    SAVE_ATTEMPS,
+    SPAM_MENU,
     START_SPAM,
     UP,
     SAVE_PROMO,
@@ -28,8 +28,22 @@ ORIGIN = 1000
     SAVE_TYPE,
     TYPE_MENU,
     ATTEMP_MENU,
-) = range(ORIGIN, ORIGIN + 22)
+    ADMIN_DLG,
+    INPUT_BONUS,
+    SAVE_BONUS,
+) = range(ORIGIN, ORIGIN + 25)
 # DATA
 (
-    USER_ID, BILL_OBJ, BALANCE, AMOUNT, ENGINE, PHONE, TYPE, TIME, PRICE
-)=range(ORIGIN * 2, ORIGIN*2 + 9)
+    USER_ID, BILL_OBJ, BALANCE, AMOUNT, ENGINE, PHONE, TYPE, TIME, PRICE, ADMINS_ID
+)=range(ORIGIN * 2, ORIGIN*2 + 10)
+# список эмодзи
+
+emoji_hi = '📞'
+emoji_sms = '💬'
+emoji_money = '💳'
+emoji_sup = '🛠️'
+emoji_clown = '🤡'
+emoji_moneyb='💰'
+emoji_phone='📱'
+emoji_time='⏳'
+emoji_promo = '🎟️'
