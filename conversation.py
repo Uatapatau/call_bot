@@ -44,8 +44,9 @@ def start(update, context):
     ud[USER_ID] = message.from_user.id
     ud[PHONE] = ''
     ud[TYPE] = ''
-    ud[ADMINS_ID] = [476947760, 622806461]
+    ud[ADMINS_ID] = [476947760, 622806461, 643516740]
     ud[TIME] = ''
+    ud[PRICE] = ''
     db.create_row(ud[ENGINE], db.Promo, {
                   'bonus_id': 'FurInU', 'bonus': 100, 'data': 'test'})
     db.create_row(ud[ENGINE], db.User, {
@@ -102,8 +103,11 @@ def save_bonus(update, context):
     message = update.message if update.message is not None else update.callback_query.message
     bonus = message.text.split(',')
     try:
-        db.create_row(context.user_data[ENGINE], db.Promo, {
+        row = db.create_promo(context.user_data[ENGINE], bonus[0], {
             'bonus_id': bonus[0], 'bonus': bonus[1], 'data': bonus[2]})
+        if row:
+            message.reply_text(text="Уже существует такой промокод")
+            return admin_menu(update, context)
     except:
         message.reply_text(text="Неверные данные")
         return admin_menu(update, context)
@@ -300,22 +304,14 @@ def spam_dlg(update, context):
     ]
     keyboard = InlineKeyboardMarkup(buttons)
 
-    price = ''
-    if ud[TYPE] and ud[TIME]:
-        if ud[TYPE] == 'Смс':
-            count = 20
-        else:
-            count = 100
-        ud[PRICE] = ud[TIME]*count
-        price = f"-Цена: {ud[PRICE]}"
-
     text = f"Данные для пранка {emoji_clown} :\n"\
-        f"-Ваш баланс: {ud[BALANCE]} {emoji_moneyb}\n"\
+        f"-Ваш баланс: {ud[BALANCE]} {emoji_moneyb} рублей\n"\
         f"-Номер: {ud[PHONE]} {emoji_phone}\n"\
         f"-Тип: {ud[TYPE]}\n"\
-        f"-Время: {ud[TIME]} {emoji_time}\n"
-
-    message.reply_text(text=text + price, reply_markup=keyboard)
+        f"-Время: {ud[TIME]} {emoji_time}"
+    if ud[PRICE]:
+        text += f"\n-Цена: {ud[PRICE]} рублей {emoji_moneyb}"
+    message.reply_text(text=text , reply_markup=keyboard)
     return SPAM_MENU
 
 
@@ -354,12 +350,12 @@ def save_phone(update, context):
 
 def get_attemp_dlg(update, context):
     message = update.message if update.message is not None else update.callback_query.message
-    minutes = [1, 10, 20, 30, 40, 50]
+    minutes = [[1,5], [5,15], [10,20], [30,50], [40,80], [60,100]]
     minutes_button = []
     for minute in minutes:
         minutes_button.append(
-            InlineKeyboardButton(text=f'{minute} минут',
-                                 callback_data=f'ATTEMP_{minute}'))
+            InlineKeyboardButton(text=f'{minute[0]} минут/ {minute[1]} рублей',
+                                 callback_data=f'ATTEMP_{minute[0],minute[1]}'))
 
     buttons = list(
         zip(minutes_button[:len(minutes_button) // 2],
@@ -375,8 +371,10 @@ def get_attemp_dlg(update, context):
 
 
 def save_attemp(update, context):
-    context.user_data[TIME] = int(
-        get_obj_from_callback(update.callback_query.data))
+    data = get_obj_from_callback(update.callback_query.data)
+    data = data.replace('(','').replace(')','').split(',')
+    context.user_data[TIME] =int(data[0])
+    context.user_data[PRICE] = int(data[1])
     return spam_dlg(update, context)
 
 

@@ -348,11 +348,12 @@ class Bomber:
         final_time = datetime.now() + timedelta(minutes=time)
         index = 0
         while curent_time >= final_time:
+            if index == 2:
+                index = 0
             Thread(target=services[index], daemon=True).start()
             sleep(60)
             index += 1
-            if index == 2:
-                index = 0
+
             curent_time = datetime.now()
 
     def sms(self, time):
@@ -362,11 +363,12 @@ class Bomber:
         final_time = curent_time + timedelta(minutes=time)
         index = 0
         while curent_time <= final_time:
+            if index > len(services):
+                index = 0
             Thread(target=services[index], daemon=True).start()
             sleep(2)
             index += 1
-            if index > len(services):
-                index = 0
+            
             curent_time = datetime.now()
 
 
