@@ -61,18 +61,22 @@ def main_menu_dlg(update, context):
 
     buttons = [
         [InlineKeyboardButton(
-            text=f'Звонки {emoji_hi}', callback_data=str(SPAM))],
+            text=f'Начать {emoji_hi}', callback_data=str(SPAM)),
+        InlineKeyboardButton(
+            text=f'Баланс {emoji_money}', callback_data=str(BALANCE_MENU))],
         [InlineKeyboardButton(
             text=f'Поддержка {emoji_sup}', callback_data=str(SUPPORT))],
-        [InlineKeyboardButton(
-            text=f'Баланс {emoji_money}', callback_data=str(BALANCE_MENU))],
     ]
     if context.user_data[USER_ID] in context.user_data[ADMINS_ID]:
         buttons.append([InlineKeyboardButton(
             text='Админка', callback_data=str(ADMIN_DLG))])
     keyboard = InlineKeyboardMarkup(buttons)
+    text = '👋Вас приветствует SPAM/CALL/SMS/BOMBER, \n'\
+        'Мы предоставляем услугу спам-атаки смс📩 и звонками📞 на любой номер СНГ🌍. \n'\
+        'Что бы начать нажмите на соответствующую кнопку ниже ⬇\n'\
+        f'Ваш баланс: {context.user_data[BALANCE]}'
     message.reply_text(
-        text=f"Ваш баланс: {context.user_data[BALANCE]}", reply_markup=keyboard)
+        text=text, reply_markup=keyboard)
     return MAIN_MENU
 
 
@@ -113,9 +117,9 @@ def save_bonus(update, context):
         return admin_menu(update, context)
 
     db.create_log(context.user_data[ENGINE], context.user_data[USER_ID],
-                  'Add promo {promo.bonus}', f'{context.user_data[AMOUNT]}')
+                  f'Add promo {bonus[0]}', f'{bonus[1]}')
     message.reply_text(
-        text=f"Промокод добавле\n'bonus_id': {bonus[0]}, 'bonus': {bonus[1]}, 'data': {bonus[2]}")
+        text=f"Промокод добавлен\n'bonus_id': {bonus[0]}, 'bonus': {bonus[1]}, 'data': {bonus[2]}")
     return admin_menu(update, context)
 
 
@@ -160,7 +164,7 @@ def balannce_dlg(update, context):
 
 def get_price(update, context):
     message = update.message if update.message is not None else update.callback_query.message
-    prices = [1, 100, 200, 300, 400, 500]
+    prices = [10, 20, 50, 80, 100, 300, 500]
     price_button = []
     for price in prices:
         price_button.append(
@@ -193,14 +197,13 @@ def fill_balance(update, context):
         [
             InlineKeyboardButton(
                 text='Проверить', callback_data=str(CHECK_BALANCE)),
-            InlineKeyboardButton(
-                text='Отмена', callback_data=str(BACK_TO_BALANCE_MENU)),
         ]
     ]
     keyboard = InlineKeyboardMarkup(buttons)
     message.reply_text(
         text='Что бы пополнить баланс перейдите по ссылке: '
-        f'\n {context.user_data[BILL_OBJ].pay_url}', reply_markup=keyboard)
+        f'\n {context.user_data[BILL_OBJ].pay_url}\n'\
+        'Если вы еще не оплатили и передумали, нажмите [/back]', reply_markup=keyboard)
     return PAY_MENU
 
 
@@ -208,7 +211,6 @@ def check_balance(update, context):
     pay_status = check_pay(context.user_data[BILL_OBJ].bill_id)
     ud = context.user_data
     if pay_status:
-        context.user_data[BILL_OBJ] = None
         db.update_balance(
             context.user_data[ENGINE], context.user_data[USER_ID],  ud[BALANCE] + ud[AMOUNT])
 
@@ -217,6 +219,7 @@ def check_balance(update, context):
 
         db.create_log(ud[ENGINE], ud[USER_ID], 'fill_balance', f'{ud[AMOUNT]}')
         main_menu_dlg(update, context)
+        context.user_data[BILL_OBJ] = None
         return MAIN_MENU
     else:
         return fill_balance(update, context)
@@ -246,7 +249,7 @@ def get_promo(update, context):
                 message.reply_text(
                     text=f"Ваш баланс пополнен на {promo.bonus} рублей")
                 db.create_log(context.user_data[ENGINE], context.user_data[USER_ID],
-                              'Use promo {promo.bonus}', f'{context.user_data[AMOUNT]}')
+                              f'Use promo {promo.bonus_id}', f'Прибавлено к балансу: {promo.bonus}')
                 main_menu_dlg(update, context)
                 return UP
             else:
@@ -311,7 +314,7 @@ def spam_dlg(update, context):
         f"-Время: {ud[TIME]} {emoji_time}"
     if ud[PRICE]:
         text += f"\n-Цена: {ud[PRICE]} рублей {emoji_moneyb}"
-    message.reply_text(text=text , reply_markup=keyboard)
+    message.reply_text(text=text, reply_markup=keyboard)
     return SPAM_MENU
 
 
@@ -350,7 +353,7 @@ def save_phone(update, context):
 
 def get_attemp_dlg(update, context):
     message = update.message if update.message is not None else update.callback_query.message
-    minutes = [[1,5], [5,15], [10,20], [30,50], [40,80], [60,100]]
+    minutes = [[1, 5], [5, 15], [10, 20], [30, 50], [40, 80], [60, 100]]
     minutes_button = []
     for minute in minutes:
         minutes_button.append(
@@ -366,14 +369,14 @@ def get_attemp_dlg(update, context):
 
     keyboard = InlineKeyboardMarkup(buttons)
     message.reply_text(
-        text='Выберите количество времени для пранка (смс 20 рублей, звонок 100 рублей за 1 минуту)', reply_markup=keyboard)
+        text='Выберите количество времени для пранка', reply_markup=keyboard)
     return ATTEMP_MENU
 
 
 def save_attemp(update, context):
     data = get_obj_from_callback(update.callback_query.data)
-    data = data.replace('(','').replace(')','').split(',')
-    context.user_data[TIME] =int(data[0])
+    data = data.replace('(', '').replace(')', '').split(',')
+    context.user_data[TIME] = int(data[0])
     context.user_data[PRICE] = int(data[1])
     return spam_dlg(update, context)
 
@@ -407,7 +410,7 @@ def start_spam(update, context):
         return UP
     else:
         text = 'Не хватает средст для запуска пранка\n'\
-            f'Ваш баланс: {ud[BALANCE]}'\
+            f'Ваш баланс: {ud[BALANCE]}\n'\
             f'Цена: {ud[PRICE]}'
         message.reply_text(text=text)
         return spam_dlg(update, context)

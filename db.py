@@ -105,3 +105,4 @@ def update_balance(engine, user_id, balance):
 def create_log(engine, user_id, type, data):
     with Session(engine) as session:
         session.add(History(user_id=user_id, type=type, data=data))
+        session.commit()

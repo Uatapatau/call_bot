@@ -65,8 +65,6 @@ def balance_conversation(pattern):
             PAY_MENU:[
                 CallbackQueryHandler(conversation.check_balance,
                                      pattern='^' + str(CHECK_BALANCE) + '$'),
-                CallbackQueryHandler(conversation.return_to_balance_menu,
-                                     pattern='^' + str(BACK_TO_BALANCE_MENU) + '$'),
             ],
             GET_PRICE_MENU:[
                 CallbackQueryHandler(conversation.perform_pay,
@@ -77,6 +75,7 @@ def balance_conversation(pattern):
         },
 
         fallbacks=[
+            CommandHandler('back', conversation.return_to_balance_menu),
             MessageHandler(
                 Filters.text, conversation.process_arbitrary_message_sub),
             CallbackQueryHandler(conversation.process_arbitrary_callback_sub)
