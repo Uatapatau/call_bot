@@ -203,6 +203,7 @@ def fill_balance(update, context):
     message.reply_text(
         text='Что бы пополнить баланс перейдите по ссылке: '
         f'\n {context.user_data[BILL_OBJ].pay_url}\n'\
+        'Что бы баланс пополнился выолните оплату и нажмите кнопку "Проверить"\n'\
         'Если вы еще не оплатили и передумали, нажмите [/back]', reply_markup=keyboard)
     return PAY_MENU
 
@@ -347,8 +348,14 @@ def perform_phone_save(update, context):
 
 def save_phone(update, context):
     message = update.message if update.message is not None else update.callback_query.message
-    context.user_data[PHONE] = message.text
-    return spam_dlg(update, context)
+    phone = message.text
+    import re
+    if re.match(settings.REG, phone) is not None: 
+        context.user_data[PHONE] = phone
+        return spam_dlg(update, context)
+    
+    message.reply_text(text="Некорректный номер телефона\n Номер должен начинаться с '79...'")
+    return SAVE_PHONE
 
 
 def get_attemp_dlg(update, context):
